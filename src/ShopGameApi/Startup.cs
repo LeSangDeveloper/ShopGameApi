@@ -10,7 +10,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
+using Pomelo.EntityFrameworkCore.MySql;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
+using Microsoft.EntityFrameworkCore;
+using ShopGameApi.Data;
 namespace ShopGameApi
 {
     public class Startup
@@ -25,7 +28,9 @@ namespace ShopGameApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddDbContext<ShopGameApiDBContext>(opt => opt.UseMySql(Configuration.GetConnectionString(nameof(ShopGameApiDBContext))));
+
+            services.AddControllers().AddNewtonsoftJson();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
