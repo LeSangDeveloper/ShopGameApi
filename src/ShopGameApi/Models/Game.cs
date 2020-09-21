@@ -19,9 +19,9 @@ namespace ShopGameApi.Models
         [DataType(DataType.DateTime)]
         public DateTime ReleasedTime { get; set; }
         
-        public Company company { get; set; }
+        public Company Company { get; set; }
 
-        public Rating rating { get; set; }
+        public Rating Rating { get; set; }
 
         public IList<UserGame> UserGame { get; set; }
         public IList<CategoryGame> CategoryGame { get; set; }

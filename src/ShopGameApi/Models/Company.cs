@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace ShopGameApi.Models
 {
@@ -11,5 +14,8 @@ namespace ShopGameApi.Models
 
         [StringLength(255, MinimumLength = 3)]
         public string Country { get; set; }
+
+        [JsonIgnore]
+        public ICollection<Game> Games { get; set; }
     }
 }
