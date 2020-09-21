@@ -15,6 +15,13 @@ using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using Newtonsoft.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using ShopGameApi.Data;
+using System.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 namespace ShopGameApi
 {
     public class Startup
@@ -30,6 +37,20 @@ namespace ShopGameApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ShopGameApiDBContext>(opt => opt.UseMySql(Configuration.GetConnectionString(nameof(ShopGameApiDBContext))));
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options => {
+                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = Configuration[JWT.Issuer],
+                    ValidAudience = Configuration[JWT.Issuer],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration[JWT.Key]))
+                };
+            });
 
             services.AddControllers().AddNewtonsoftJson(options => {
                 options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
@@ -48,6 +69,8 @@ namespace ShopGameApi
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
