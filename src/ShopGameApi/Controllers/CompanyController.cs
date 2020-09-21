@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +24,24 @@ namespace ShopGameApi.Controllers
         }
 
         [HttpGet]
-        public List<Company> GetCompanies() => _context.Companies.ToList<Company>();
+        public List<Company> GetCompanies() 
+        {
+            List<Company> companies =  _context.Companies.ToList<Company>();
+            return companies;
+        }
+
+        [HttpGet("{id}")]
+        public List<Game> GetGameOfCompany(int id)
+        {
+            List<Game> games = _context.Games.ToList();
+            List<Rating> ratings = _context.Ratings.ToList();
+            List<Company> companies =  _context.Companies.ToList();
+            List<Game> results = new List<Game>();
+
+            results = games.Where<Game>(g => g.Company.CompanyId == id).ToList();
+
+            return results;
+        }
 
         [HttpPost("AddCompany")]
         public async Task<IActionResult> PostAddCompany(Company company)
