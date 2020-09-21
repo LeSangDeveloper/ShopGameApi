@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ShopGameApi.Data;
 using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
 using ShopGameApi.Models;
 
 namespace ShopGameApi.Controllers
@@ -24,6 +23,7 @@ namespace ShopGameApi.Controllers
             _config = config;
         }
 
+        [HttpGet]
         public List<Game> GetGames() => _context.Games.ToList<Game>();
 
     }
