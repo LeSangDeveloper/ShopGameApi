@@ -21,7 +21,9 @@ namespace ShopGameApi.Models
         
         public Company company { get; set; }
 
-        public IList<UserGame> UserGame { get; set; }
+        public Rating rating { get; set; }
 
+        public IList<UserGame> UserGame { get; set; }
+        public IList<CategoryGame> CategoryGame { get; set; }
     }
 }

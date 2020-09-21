@@ -15,12 +15,17 @@ namespace ShopGameApi.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserGame>().HasKey(ug => new { ug.UserId, ug.GameId });
+            modelBuilder.Entity<CategoryGame>().HasKey(cg => new { cg.CategoryId, cg.GameId });
         }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Game> Games { get; set; }
-        public DbSet<UserGame> UserGames { get; set; }
         public DbSet<Company> Companies { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Rating> Ratings { get; set; }
+
+        public DbSet<UserGame> UserGame { get; set; }
+        public DbSet<CategoryGame> CategoryGame { get; set; }
 
     }
 }
