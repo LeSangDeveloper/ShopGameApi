@@ -28,7 +28,9 @@ namespace ShopGameApi.Controllers
             
             List<Game> games = _context.Games.ToList<Game>();
             List<Company> companies = _context.Companies.ToList<Company>();
-            List<Rating> ratings = _context.Ratings.ToList<Rating>();          
+            List<Rating> ratings = _context.Ratings.ToList<Rating>();        
+            List<UserGame> userGames = _context.UserGame.ToList();
+              
             return games;
         }
 
