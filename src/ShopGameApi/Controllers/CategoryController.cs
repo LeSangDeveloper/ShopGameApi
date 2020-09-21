@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -10,27 +9,20 @@ namespace ShopGameApi.Controllers
 {
     [ApiController]
     [Route("{controller}")]
-    public class GameController : ControllerBase
+    public class CategoryController : ControllerBase
     {
+
         private readonly ShopGameApiDBContext _context;
         private readonly IConfiguration _config;
 
-        public GameController(ShopGameApiDBContext context, IConfiguration config)
+        public CategoryController(ShopGameApiDBContext context, IConfiguration config)
         {
-            _context = context;
             _config = config;
+            _context = context;
         }
 
-        [HttpGet]
-        public List<Game> GetListGames()
-        {
-            List<Game> games = _context.Games.ToList<Game>();
-
-            return games;
-        }
-
-        [HttpPost]
-        public IActionResult PostAddGame(Game game, Company company)
+        [HttpPost("AddCategory")]
+        public IActionResult PostAddCategory(Category category)
         {
 
             return Ok();
