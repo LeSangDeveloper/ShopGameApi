@@ -30,7 +30,8 @@ namespace ShopGameApi.Controllers
             List<Company> companies = _context.Companies.ToList<Company>();
             List<Rating> ratings = _context.Ratings.ToList<Rating>();        
             List<UserGame> userGames = _context.UserGame.ToList();
-              
+            _context.Categories.ToList();
+            _context.CategoryGame.ToList();
             return games;
         }
 
