@@ -1,4 +1,8 @@
 using Newtonsoft.Json;
+using System.Xml;
+using System.Xml.Serialization;
+using System.Runtime.Serialization;
+using System.IO;
 namespace ShopGameApi.Models
 {
     public class CategoryGame

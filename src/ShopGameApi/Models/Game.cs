@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
+using System.Xml.Serialization;
 
 namespace ShopGameApi.Models
 {
@@ -25,8 +26,10 @@ namespace ShopGameApi.Models
         public Rating Rating { get; set; }
 
         [JsonIgnore]
+        [XmlIgnore]
         public IList<UserGame> UserGame { get; set; }
 
+        [XmlIgnore]
         public IList<CategoryGame> CategoryGame { get; set; }
     }
 }

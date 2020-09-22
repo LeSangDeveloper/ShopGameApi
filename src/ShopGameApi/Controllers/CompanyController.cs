@@ -6,11 +6,12 @@ using ShopGameApi.Data;
 using Microsoft.Extensions.Configuration;
 using ShopGameApi.Models;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace ShopGameApi.Controllers
 {
     [ApiController]
-    [Route("{controller}")]
+    [Route("api/company")]
     public class CompanyController : ControllerBase
     {
 
@@ -27,6 +28,7 @@ namespace ShopGameApi.Controllers
         public List<Company> GetCompanies() 
         {
             List<Company> companies =  _context.Companies.ToList<Company>();
+    
             return companies;
         }
 

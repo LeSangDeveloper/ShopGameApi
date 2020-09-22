@@ -5,12 +5,11 @@ using ShopGameApi.Data;
 using Microsoft.Extensions.Configuration;
 using ShopGameApi.Models;
 using System.Threading.Tasks;
-using ShopGameApi.Models;
 
 namespace ShopGameApi.Controllers
 {
     [ApiController]
-    [Route("{controller}")]
+    [Route("api/category")]
     public class CategoryController : ControllerBase
     {
 

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace ShopGameApi.Controllers
 {
     [ApiController]
-    [Route("{controller}")]
+    [Route("api/game")]
     public class GameController : ControllerBase
     {
         private readonly ShopGameApiDBContext _context;

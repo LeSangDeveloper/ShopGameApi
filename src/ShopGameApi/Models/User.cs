@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Xml.Serialization;
 
 namespace ShopGameApi.Models
 {
@@ -17,6 +18,7 @@ namespace ShopGameApi.Models
         [StringLength(255, MinimumLength = 5)]
         public string Password { get; set; }
 
+        [XmlIgnore]
         public IList<UserGame> UserGame { get; set; }
     }
 }

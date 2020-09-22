@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace ShopGameApi.Controllers
 {
     [ApiController]
-    [Route("{controller}")]
+    [Route("api/user")]
     public class UserController : ControllerBase
     {
         private readonly ShopGameApiDBContext _context;
