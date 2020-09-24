@@ -6,6 +6,9 @@ using ShopGameApi.Data;
 using Microsoft.Extensions.Configuration;
 using ShopGameApi.Models;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using ShopGameApi.Objects;
 
 namespace ShopGameApi.Controllers
 {
@@ -23,16 +26,23 @@ namespace ShopGameApi.Controllers
         }
 
         [HttpGet]
-        public List<Game> GetListGames()
-        {
+        public List<GameObjectJson> GetListGames()
+        {          
+            var games = _context.Games
+            .Include(g => g.Company)
+            .Include(g => g.Rating)
+            .Include(g => g.Rating)
+            .Include(g => g.CategoryGame)
+            .ThenInclude(cg => cg.Category);
+
+            List<GameObjectJson> gameObjectJsons = new List<GameObjectJson>();
+
+            foreach (Game game in games)
+            {
+                gameObjectJsons.Add(game.Covert());
+            }
             
-            List<Game> games = _context.Games.ToList<Game>();
-            List<Company> companies = _context.Companies.ToList<Company>();
-            List<Rating> ratings = _context.Ratings.ToList<Rating>();        
-            List<UserGame> userGames = _context.UserGame.ToList();
-            _context.Categories.ToList();
-            _context.CategoryGame.ToList();
-            return games;
+            return gameObjectJsons;
         }
 
         [HttpPost("AddGame")]

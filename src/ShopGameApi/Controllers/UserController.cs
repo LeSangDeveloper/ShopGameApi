@@ -92,7 +92,7 @@ namespace ShopGameApi.Controllers
             {
                     return NotFound();
             }
-            return new OkResult();
+            
         }
 
         [HttpPost("signin")]

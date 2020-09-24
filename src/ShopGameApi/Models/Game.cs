@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 using System.Xml.Serialization;
+using ShopGameApi.Objects;
 
 namespace ShopGameApi.Models
 {
@@ -31,5 +32,24 @@ namespace ShopGameApi.Models
 
         [XmlIgnore]
         public IList<CategoryGame> CategoryGame { get; set; }
+
+        public GameObjectJson Covert()
+        {
+            GameObjectJson gameObjectJson = new GameObjectJson();
+            gameObjectJson.Name = this.Name;
+            gameObjectJson.Price = this.Price;
+            gameObjectJson.Company = this.Company.Name;
+            gameObjectJson.ReleasedTime = this.ReleasedTime;
+            gameObjectJson.Score = this.Rating.Score;
+            gameObjectJson.Categories = new List<string>();
+
+            foreach (CategoryGame categoryGame in CategoryGame)
+            {
+                gameObjectJson.Categories.Add(categoryGame.Category.Name);
+            }
+
+            return gameObjectJson;
+        }
+
     }
 }

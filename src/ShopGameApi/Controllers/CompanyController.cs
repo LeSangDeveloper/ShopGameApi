@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using ShopGameApi.Data;
 using Microsoft.Extensions.Configuration;
 using ShopGameApi.Models;
+using ShopGameApi.Objects;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,16 +34,24 @@ namespace ShopGameApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public List<Game> GetGameOfCompany(int id)
+        public List<GameObjectJson> GetGameOfCompany(int id)
         {
-            List<Game> games = _context.Games.ToList();
-            List<Rating> ratings = _context.Ratings.ToList();
-            List<Company> companies =  _context.Companies.ToList();
-            List<Game> results = new List<Game>();
+            List<Game> games = _context.Games
+            .Include(g => g.Company)
+            .Include(g => g.Rating)
+            .Include(g => g.CategoryGame)
+            .ThenInclude(cg => cg.Category)
+            .Where<Game>(g => g.Company.CompanyId == id)
+            .ToList();
 
-            results = games.Where<Game>(g => g.Company.CompanyId == id).ToList();
+            List<GameObjectJson> gameObjects = new List<GameObjectJson>();
 
-            return results;
+            foreach (Game game in games)
+            {
+                gameObjects.Add(game.Covert());
+            }
+
+            return gameObjects;
         }
 
         [HttpPost("AddCompany")]

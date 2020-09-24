@@ -5,6 +5,8 @@ using ShopGameApi.Data;
 using Microsoft.Extensions.Configuration;
 using ShopGameApi.Models;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using ShopGameApi.Objects;
 
 namespace ShopGameApi.Controllers
 {
@@ -23,13 +25,15 @@ namespace ShopGameApi.Controllers
         }
 
         [HttpGet]
-        public List<Category> GetCategories() 
+        public List<CategoryObjectJson> GetCategories() 
         {
-            List<Category> caterogy = _context.Categories.ToList<Category>();
-            _context.Games.ToList();
-            _context.CategoryGame.ToList();
-            
-            return caterogy;
+            List<Category> caterogies = _context.Categories.Include(c => c.CategoryGame).ThenInclude(cg => cg.Game).ToList();
+            List<CategoryObjectJson> categoryObjectJsons = new List<CategoryObjectJson>();
+            foreach (Category category in caterogies)
+            {
+                categoryObjectJsons.Add(category.Convert());
+            }
+            return categoryObjectJsons;
         }
 
         [HttpPost("AddCategory")]
@@ -48,9 +52,7 @@ namespace ShopGameApi.Controllers
         [HttpPost("{id}")]
         public async Task<IActionResult> PostAddGameToCategory(int id, [FromBody]Game game)
         {
-            _context.Categories.ToList();
-            _context.Games.ToList();
-            _context.CategoryGame.ToList();
+            _context.Categories.Include(c => c.CategoryGame).ThenInclude(cg => cg.Game);
             Category category = await _context.Categories.FindAsync(id);
             Game game48 = await _context.Games.FindAsync(game.GameId);
             
@@ -59,7 +61,7 @@ namespace ShopGameApi.Controllers
                 return BadRequest(new {error = "Category or Game is not Established!"} );
             }
 
-            CategoryGame categoryGame = _context.CategoryGame.FirstOrDefault<CategoryGame>(cg => (cg.GameId == game48.GameId && cg.GameId == category.CategoryId));
+            CategoryGame categoryGame = await _context.CategoryGame.FirstOrDefaultAsync<CategoryGame>(cg => (cg.GameId == game48.GameId && cg.GameId == category.CategoryId));
 
             if (categoryGame == null)
             {
