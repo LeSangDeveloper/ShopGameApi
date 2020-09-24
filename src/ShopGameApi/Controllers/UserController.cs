@@ -13,6 +13,9 @@ using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.AspNetCore.Identity;
 
 namespace ShopGameApi.Controllers
 {
@@ -32,20 +35,39 @@ namespace ShopGameApi.Controllers
         [HttpGet]
         public List<User> GetUsers()
         {
-            List<User> users = _context.Users.ToList<User>();
-            List<UserGame> userGame = _context.UserGame.ToList<UserGame>();
-            List<Game> games = _context.Games.ToList<Game>();
+            List<User> users = _context.Users.Include(u => u.UserGame).ThenInclude(ug => ug.Game).ToList();
             
             return users;
+        }
+
+        [Authorize]
+        [HttpGet("GetGames")]
+        public async Task<List<Game>> GetUserGames()
+        {
+            int UserId = Int32.Parse(HttpContext.User.FindFirstValue("User ID"));
+            User user = await  _context.Users.Include(u => u.UserGame).ThenInclude(ug => ug.Game).FirstOrDefaultAsync(u => u.UserId == UserId);
+            if (user != null)
+            {
+                List<Game> games = new List<Game>();
+
+                foreach (UserGame userGame in user.UserGame)
+                {   
+                    games.Add(userGame.Game);
+                }
+
+                return games;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         [Authorize]
         [HttpPost("AddGame")]
         public async Task<IActionResult> PostAddUserGame(Game game)
         {   
-            _context.Games.ToList();
-            _context.Users.ToList();
-            _context.UserGame.ToList();
+            _context.Users.Include(u => u.UserGame).ThenInclude(ug => ug.Game);
 
             int UserId = Int32.Parse(HttpContext.User.FindFirstValue("User ID"));
             User user = await  _context.Users.FindAsync(UserId);
@@ -55,7 +77,9 @@ namespace ShopGameApi.Controllers
                 if (gameChoose != null)
                 {
                     // Add Game and User to UserGame
-                    UserGame userGame = _context.UserGame.FirstOrDefault(ug => (ug.UserId == user.UserId && ug.GameId == gameChoose.GameId));
+                    UserGame userGame = await _context.UserGame.
+                    FirstOrDefaultAsync(ug => (ug.UserId == user.UserId && ug.GameId == gameChoose.GameId));
+                    
                     if (userGame == null)
                     {
                         userGame = new UserGame 
@@ -80,7 +104,7 @@ namespace ShopGameApi.Controllers
                     }
                     else
                     {
-                        return BadRequest(new { error = "Cannot add game!" } );
+                        return BadRequest(new { error = userGame } );
                     }
                 }
                 else
@@ -113,12 +137,14 @@ namespace ShopGameApi.Controllers
         public async Task<IActionResult> PostSignupAsync(User user)
         {
             User result = _context.Users.FirstOrDefault<User>(u => u.Name == user.Name);
-            
+
             if (result != null)
             {
                 return BadRequest("User name is established!");
             }
-            
+
+            user.Password = new PasswordHasher<User>().HashPassword(user, user.Password);
+
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
 
@@ -145,11 +171,20 @@ namespace ShopGameApi.Controllers
 
         }
 
-        private User AuthenticateUser(User UserLogin)
+        private User AuthenticateUser(User userLogin)
         {
             User user;
 
-            user = _context.Users.FirstOrDefault<User>(u => ((u.Name == UserLogin.Name) && (u.Password == UserLogin.Password)));
+            user = _context.Users.FirstOrDefault<User>(u => ((u.Name == userLogin.Name)));
+
+            if (user != null)
+            {
+                PasswordVerificationResult result = new PasswordHasher<User>().VerifyHashedPassword(userLogin, user.Password, userLogin.Password);
+                if (result == PasswordVerificationResult.Failed)
+                {
+                    return null;
+                }
+            }
 
             return user;
         }

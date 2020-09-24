@@ -36,6 +36,7 @@ namespace ShopGameApi.Models
         public GameObjectJson Covert()
         {
             GameObjectJson gameObjectJson = new GameObjectJson();
+            gameObjectJson.GameId = this.GameId;
             gameObjectJson.Name = this.Name;
             gameObjectJson.Price = this.Price;
             gameObjectJson.Company = this.Company.Name;
